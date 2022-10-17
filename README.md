@@ -1,6 +1,10 @@
-# Fall 2022 UIUC ECE 470 Project : Fruit Classifying Robot Arm
+# Fall22 UIUC ECE470 Project : Fruit Classifying Robot Arm
 
-### Team Members : afouad2, yuanas2, miguelb4, ntlevin2
+### Team Members : 
+* Avram Fouad ***afouad2***
+* Yu-An Su ***yuanas2***
+* Miguel Belda Cambra ***miguelb4***
+* Nathan Tyler Levin ***ntlevin2***
 
 ### Proposal :
 The robot arm will classify fruits, based on their color and/or shape, from a conveyor belt and then places fruits in boxes according to their type. We will use camera to capture the real-time image of the conveyor, and then use OpenCV to detect the fruit’s color and/or shape. Finally, we plan to use the UR3 robot arm in Gazebo to pick up the fruit and place it respectively.
