@@ -1,62 +1,32 @@
-# tams_apriltags: 3D models with Apriltag textures.
+# Fall22 UIUC ECE470 Project : Fruit Classifying Robot Arm
 
-This ROS package provides URDF models of thin cards with Apriltag textures, 
-plus some example objects with attached Apriltag markers.
-Adding a few markers to your robots or enviroments allows you 
-to test full vision pipelines based on the Apriltags detector.
+### Team Members : 
+* Avram Fouad ***afouad2***
+* Yu-An Su ***yuanas2***
+* Miguel Belda Cambra ***miguelb4***
+* Nathan Tyler Levin ***ntlevin2***
 
-All markers of the 16h5 and 36h11 tag families are included;
-markers of the other families can be generated quickly if needed.
-The implementation uses a set of 3D collada meshes,
-each one with the corresponding marker image as its texture.
-This should work in all recent versions of Gazebo and in rviz, 
-using ROS Kinetic or newer.
+### Proposal :
+The robot arm will classify fruits, based on their color and/or shape, from a conveyor belt and then places fruits in boxes according to their type. We will use camera to capture the real-time image of the conveyor, and then use OpenCV to detect the fruit’s color and/or shape. Finally, we plan to use the UR3 robot arm in Gazebo to pick up the fruit and place it respectively.
 
-## Example
+### Requirements :
+1. There should be a specific spot on the conveyor belt where each fruit gets examined and classified by our camera.
+2. The program should be able to correctly classify each fruit based on its color, or perhaps combination of color and shape .
+3. There should be at least one box for each type of fruit.
+4. The robot arm should grab and place each fruit in its corresponding box.
 
-A Pioneer and some AprilCubes in Gazebo:
+### Project Update 1 22/10/13 :
+We created the virtual environment in Gazebo, simulated the UR3 robot arm and subscribed to the camera topic within ROS to display the camera sensor input. This was done by subscribing to the topic “/cv_camera_node/image_raw” found in the camera.urdf file. As seen in the video, the arm movement in the Gazebo environment is shown on the left and the camera input is shown on the right, evident with a slight delay. Later in the project this camera will be used to distinguish fruits based on their color and then the arm will move that specific fruit to its designated location. We plan to look into if pose estimation for the fruits is feasible for this to inform the robot gripper positioning, but at this point in the project implementation for pose estimation in Gazebo was not extensively explored.
+ 
+Video of camera input & robot moving in Gazebo : <https://www.youtube.com/watch?v=XPslIs2DJBs&feature=youtu.be>
 
-[Pioneer robot and AprilCubes in Gazebo](Media/surface/gazebo-aprilcubes.png)
+Having established a functioning Gazebo simulation environment, successfully accessed sensor inputs, and moved the robot, we feel confident our project is feasible. Should the implementation described above prove too simple in practice, we could add difficulty to the project by implementing pose estimation with R-CNN. 
 
-The AprilCubes in rviz:
+source code is here : https://drive.google.com/file/d/1DdJ8mFw_B7jsP5NnZhcOFd3K9GMblF8v/view?usp=share_link
 
-[AprilCubes in rviz](Media/surface/rviz-aprilcubes.png)
-
-
-## Installation
-
-Clone this repository into your workspace and run `catkin_make`.
-There are no nodes to build.
-
-## Usage
-
-For a first selftest using Gazebo and rviz for visualization:
-```
-roslaunch tams_apriltags apriltag_demo.launch
-```
-
-See the provided `april_cube.xacro` file for an example on how
-to attach (multiple) apriltags to an URDF robot model:
-```
-roslaunch tams_apriltags april_cube_demo.launch
-```
-
-See `apriltag_marker.xacro` for the actual Xacro macro and its parameters.
-You can specify marker name, tag family, tag ID, and the marker size by using parameters
-"size" and "apriltag_size". In case of specifying both size parameters, the "size" parameter 
-will be recalculated. At the moment, the macro requires a parent object and generates 
-the corresponding fixed joint.
-
-
-Note the use of Python expressions (introduced in ROS Jade)
-to rewrite the tag family string and to ensure leading zeros for the tag ID.
-The slightly weird scaling is needed because the master Collada mesh
-has size (100 x 100 x 0.1) millimeters.
-
-
-## Notes
-
-At the moment, only the 16h5 and 36h11 tag families are provided.
-Don't hesitate to edit and run the provided generation scripts
-to create additional markers.
-
+### Tools we're using in this project :
+* Python
+* ROS
+* Gazebo
+* OpenCV
+* Tensorflow / PyTorch (if we need to increase difficulty)
