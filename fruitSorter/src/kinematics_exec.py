@@ -4,12 +4,12 @@ import sys
 import copy
 import time
 import rospy
+
 import numpy as np
 from kinematics_header import *
 from kinematics_func import *
-# from kinematics_func_Nathan import *
 from blob_search import *
-from fruitSorter.msg import aprilTagMsg
+
 
 # ========================= Student's code starts here =========================
 
@@ -20,6 +20,58 @@ go_away = [270*PI/180.0, -90*PI/180.0, 90*PI/180.0, -90*PI/180.0, -90*PI/180.0, 
 xw_yw_G = []
 xw_yw_Y = []
 xw_yw_R = []
+
+# xy0 = []
+# xy1 = []
+# zBlock = .03
+# yPredicted_1 = []
+# yPredicted1 = []
+# blockCount = 0
+# vy = []
+# errory = 999
+# tGuess = 0.5 #s
+# invkGuess = []
+# timeStart = 0
+# timeFlag = 0
+# accel = 4.0
+# vel = 4.0
+
+# timeStart = time.time() 
+# xy0.append(xw_yw_R[0])
+
+# if time.time() - timeStart >= 0.5 and timeFlag == 0:
+#     xy1.append(xw_yw_R[0])
+#     vy.append((xy1[0,1] - xy0[0,1]) / (time.time() - timeStart))
+#     timeFlag = 1
+
+# yPredicted_1 = xy1[0:1] + vy[0] * tGuess
+
+# while errory > 0.005:
+#     invkGuess = lab_invkNoMove(xy1[0,0], yPredicted_1, zBlock)
+
+#     for i in range(0, len(invkGuess)):
+#         if tGuess == 0.5:
+#             tGuess = invkGuess[0] / (accel/2 - 2*vel)
+#         elif invkGuess[0] / (accel/2 - 2*vel) > tGuess:
+#             tGuess = invkGuess[0] / (accel/2 - 2*vel)
+
+#     yPredicted1 = xy1[0,1] + vy[0] * tGuess
+#     errory = abs(yPredicted1 - yPredicted_1)
+#     yPredicted_1 = yPredicted1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Any other global variable you want to define
 # Hints: where to put the blocks?
@@ -33,7 +85,7 @@ xw_yw_R = []
 SPIN_RATE = 20
 
 # UR3 home location
-home = [120*PI/180.0, -90*PI/180.0, 90*PI/180.0, -90*PI/180.0, -90*PI/180.0, 0*PI/180.0]
+home = [0*PI/180.0, 0*PI/180.0, 0*PI/180.0, 0*PI/180.0, 0*PI/180.0, 0*PI/180.0]
 
 # UR3 current position, using home position for initialization
 current_position = copy.deepcopy(home)
@@ -141,6 +193,8 @@ Move robot arm from one position to another
 """
 def move_arm(pub_cmd, loop_rate, dest, vel, accel):
 
+    timeInit = time.time()
+
     global thetas
     global SPIN_RATE
 
@@ -167,9 +221,11 @@ def move_arm(pub_cmd, loop_rate, dest, vel, accel):
             abs(thetas[5]-driver_msg.destination[5]) < 0.0005 ):
 
             at_goal = 1
+            # print("TIMEFINAL", time.time() - timeInit)
             #rospy.loginfo("Goal is reached!")
 
         loop_rate.sleep()
+        # print("TIMEFINAL", time.time() - timeInit)
 
         if(spin_count >  SPIN_RATE*5):
 
@@ -196,47 +252,38 @@ def move_block(pub_cmd, loop_rate, start_xw_yw_zw, target_xw_yw_zw, vel, accel):
     """
     # ========================= Student's code starts here =========================
 
-    # target_tmp = [target_xw_yw_zw[0], target_xw_yw_zw[1], target_xw_yw_zw[2] + 0.2]
+    # print(target_xw_yw_zw)
+    # target_tmp = [target_xw_yw_zw[0], target_xw_yw_zw[1],  + 0.2]
 
     # lab_invk(start_xw_yw_zw)
-    centerHeight = float(0.033)
-    tmpHeight = float(0.07)
     print(f'Start = {start_xw_yw_zw}')
     start_xw_yw_zw = list(start_xw_yw_zw)
     tmp_start_xw_yw_zw = list(start_xw_yw_zw)
-    start_xw_yw_zw.append(centerHeight)
-    tmp_start_xw_yw_zw.append(tmpHeight)
+    start_xw_yw_zw.append(0.03)
+    tmp_start_xw_yw_zw.append(0.07)
     
     target_xw_yw_zw = list(target_xw_yw_zw)
     tmp_target_xw_yw_zw = list(target_xw_yw_zw)
-    target_xw_yw_zw.append(centerHeight)
-    tmp_target_xw_yw_zw.append(tmpHeight)
+    target_xw_yw_zw.append(0.03)
+    tmp_target_xw_yw_zw.append(0.07)
 
     # gripper(pub_cmd, loop_rate, suction_off)
     
     print(f'Start = {start_xw_yw_zw[0], start_xw_yw_zw[1], start_xw_yw_zw[2], 0}')
     print(f'End = {target_xw_yw_zw[0], target_xw_yw_zw[1], target_xw_yw_zw[2], 0}')
     
+    print("move1")
     move_arm(pub_cmd, loop_rate, lab_invk(tmp_start_xw_yw_zw[0], tmp_start_xw_yw_zw[1], tmp_start_xw_yw_zw[2], 0), 4.0, 4.0)
-    
+    print("move2")
     move_arm(pub_cmd, loop_rate, lab_invk(start_xw_yw_zw[0], start_xw_yw_zw[1], start_xw_yw_zw[2], 0), 4.0, 4.0)
-
     gripper(pub_cmd, loop_rate, suction_on)
     rospy.Rate(2).sleep()
-
-    if not digital_in_0:
-        error = 1
-        gripper(pub_cmd, loop_rate, suction_off)
-        move_arm(pub_cmd, loop_rate, lab_invk(0.1, 0.1, 0.15, 0), 4.0, 4.0)
-        return error
     
     move_arm(pub_cmd, loop_rate, lab_invk(tmp_start_xw_yw_zw[0], tmp_start_xw_yw_zw[1], tmp_start_xw_yw_zw[2], 0), 4.0, 4.0)
 
     move_arm(pub_cmd, loop_rate, lab_invk(tmp_target_xw_yw_zw[0], tmp_target_xw_yw_zw[1], tmp_target_xw_yw_zw[2], 0), 4.0, 4.0)
 
     move_arm(pub_cmd, loop_rate, lab_invk(target_xw_yw_zw[0], target_xw_yw_zw[1], target_xw_yw_zw[2], 0), 4.0, 4.0)
-
-    rospy.Rate(2).sleep()
 
     gripper(pub_cmd, loop_rate, suction_off)
     
@@ -262,7 +309,6 @@ class ImageConverter:
         self.bridge = CvBridge()
         self.image_pub = rospy.Publisher("/image_converter/output_video", Image, queue_size=10)
         self.image_sub = rospy.Subscriber("/cv_camera_node/image_raw", Image, self.image_callback)
-        # self.apriltag_sub = rospy.Subscriber("/arm_sensor/camera/image_raw", Image, self.apriltag_callback)
         self.loop_rate = rospy.Rate(SPIN_RATE)
 
         # Check if ROS is ready for operation
@@ -298,21 +344,15 @@ class ImageConverter:
 
         # xw_yw_G = blob_search(cv_image, "orange")
         xw_yw_Y = blob_search(cv_image, "yellow")
-        # xw_yw_G = blob_search(cv_image, "green")
+        xw_yw_G = blob_search(cv_image, "green")
         xw_yw_R = blob_search(cv_image, "red")
+
 
 """
 Program run from here
 """
 
-def aprilTagCallback(msg):
-    global aprilTagID
-    aprilTagID = msg.id
-    if aprilTagID != 0:
-        print(f'aprilTagID = {aprilTagID}')
-
 detect = True
-aprilTagID = 0
 
 def main():
 
@@ -321,7 +361,8 @@ def main():
     global xw_yw_G
     global xw_yw_R
     global detect
-    global aprilTagID
+    # global variable1
+    # global variable2
 
     # Initialize ROS node
     rospy.init_node('lab5node')
@@ -333,7 +374,7 @@ def main():
     # each time data is published
     sub_position = rospy.Subscriber('ur3/position', position, position_callback)
     sub_input = rospy.Subscriber('ur3/gripper_input', gripper_input, input_callback)
-    aprilTagSub = rospy.Subscriber("apriltag", aprilTagMsg, aprilTagCallback)
+
     # Check if ROS is ready for operation
     while(rospy.is_shutdown()):
         print("ROS is shutdown!")
@@ -357,11 +398,30 @@ def main():
 
     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     
-    green_1_end_pos = [-0.5, 0.15]
-    yellow_1_end_pos = [-0.5, 0.15]
-    red_1_end_pos = [-0.5, 0.15]
+    green_1_end_pos = [0.195, -0.16]
+    yellow_1_end_pos = [0.25, -0.16]
+    red_1_end_pos = [-.2, .6]
     operationRange = 0.15
     blockOffset = 0.03*3
+
+    xy0 = [0, 0]
+    xy1 = [0, 0]
+    zBlock = .03
+    yPredicted_1 = []
+    yPredicted1 = []
+    yPredicted = 0
+    blockCount = 0
+    vy = 0
+    errory = 999
+    tGuess = 0.5 #s
+    invkGuess = []
+    timeStart = 0
+    timeFlag0 = 0
+    timeFlag1 = 0
+    moveFlag = 0
+
+
+
     while detect:
         greenPos = xw_yw_G
         yellowPos = xw_yw_Y
@@ -369,27 +429,137 @@ def main():
 
         if greenPos != []:
             green_1_start_pos = greenPos[0]
-            # if abs(green_1_start_pos[1]) <= operationRange:
-            if (green_1_start_pos[1] > -0.15) and (green_1_start_pos[1] < 0.4):
-                move_block(pub_command, loop_rate, green_1_start_pos, green_1_end_pos, vel, accel)
-            else:
-                print(f'green_1_start_pos = {green_1_start_pos}')
+            # # if abs(green_1_start_pos[1]) <= operationRange:
+            # if (green_1_start_pos[1] > -0.15) and (green_1_start_pos[1] < 0.4):
+            #     move_block(pub_command, loop_rate, green_1_start_pos, green_1_end_pos, vel, accel)
+            # else:
+            #     print(f'green_1_start_pos = {green_1_start_pos}')
         elif yellowPos != []:
             yellow_1_start_pos = yellowPos[0]
-            # if abs(yellow_1_start_pos[1]) <= operationRange:
-            if (yellow_1_start_pos[1] > -0.15) and (yellow_1_start_pos[1] < 0.4):
-                move_block(pub_command, loop_rate, yellow_1_start_pos, yellow_1_end_pos, vel, accel)
-            else:
-                print(f'yellow_1_start_pos = {yellow_1_start_pos}')
+            # # if abs(yellow_1_start_pos[1]) <= operationRange:
+            # if (yellow_1_start_pos[1] > -0.15) and (yellow_1_start_pos[1] < 0.4):
+            #     move_block(pub_command, loop_rate, yellow_1_start_pos, yellow_1_end_pos, vel, accel)
+            # else:
+            #     print(f'yellow_1_start_pos = {yellow_1_start_pos}')
         elif redPos != []:
             red_1_start_pos = redPos[0]
-            # if abs(red_1_start_pos[1]) <= operationRange:
+            # print("redPos", redPos)
             if (red_1_start_pos[1] > -0.15) and (red_1_start_pos[1] < 0.4):
-                move_block(pub_command, loop_rate, red_1_start_pos, red_1_end_pos, vel, accel)
+                red_1_start_pos = redPos[0]
+                if timeFlag0 == 0:     
+                    timeStart = time.time() 
+                    timeFlag0 = 1
+                    # xy0.append(np.array(redPos))
+                    xy0[0] = redPos[0][0]
+                    xy0[1] = redPos[0][1]
+                    print("xy0", xy0)
+                    # print("redpos", redPos[0][0])
+                # print("redPos", redPos)
+                # print(timeStart, time.time())
+                # print(time.time() - timeStart)
+
+                if time.time() - timeStart >= 0.25 and timeFlag1 == 0:
+                    # xy1.append(np.array(red_1_start_pos))
+                    xy1[0] = red_1_start_pos[0]
+                    xy1[1] = red_1_start_pos[1]
+                    print("here x0, x1",xy0, xy1)
+                    print(xy1, xy0)
+                    vy = ((xy1[1] - xy0[1]) / (time.time() - timeStart))
+                    print("vy", vy)
+                    print("x var", xy0, xy1, time.time(), timeStart)
+                    timeFlag1 = 1
+                
+                if time.time() - timeStart >= 0.25 and timeFlag1 == 1:
+                    yPredicted_1 = xy1[1] + vy * tGuess
+                    # print("yPred1, errory", yPredicted_1, errory, tGuess)
+                    # print("y0, y1, vy", xy0, xy1, vy)
+                    angleDiff = []
+
+                    while errory > 0.001:
+                        print(time.time())
+                        print("error", errory)
+                        invkGuess = lab_invkNoMove(xy1[0], yPredicted_1, zBlock)
+                        print("invKGuess", invkGuess)
+
+                        if tGuess == 0.5:
+                                    # tGuess = abs((invkGuess[0] - go_away[0])/ (accel/2 - 2*vel))
+                                    tGuess = abs(4*(invkGuess[0] - go_away[0])/ (accel))
+                
+                                    
+                        for i in range(0, len(invkGuess)):
+                            if tGuess < 2:
+                                for k in range(0, len(invkGuess)):
+                                    angleDiff.append(invkGuess[k] - go_away[k])
+
+                                print("angleDiff", angleDiff)
+                                
+                                print("initial", tGuess)
+                            elif abs(4*(invkGuess[0] - go_away[0])/ (accel)) > tGuess:
+                                # tGuess = abs(go_away[i]-invkGuess[i] / (accel/2 - 2*vel))
+                                tGuess = abs(4*(invkGuess[i] - go_away[i])/ (accel))
+                            else:   
+                                if abs(((invkGuess[0] - go_away[0]) + 2 *vel**2 / accel - 2*vel /accel)/ (vel)) > tGuess:
+                                    # tGuess = abs(go_away[i]-invkGuess[i] / (accel/2 - 2*vel))
+                                    tGuess = abs(4*(invkGuess[i] - go_away[i])/ (accel))
+                                    print("else")
+
+                            tGuess_1 = tGuess
+                            tGuess = 0.5
+                            # print("guesses", i, tGuess)
+                            # go_away = [270*PI/180.0, -90*PI/180.0, 90*PI/180.0, -90*PI/180.0, -90*PI/180.0, 135*PI/180.0]
+
+                            
+                            # print("tGuess", tGuess)
+
+                        yPredicted = xy1[1] + vy * tGuess_1
+                        print("y pred", yPredicted, yPredicted_1)
+                        errory = abs(yPredicted - yPredicted_1)
+                        yPredicted_1 = yPredicted
+                        timeFlag1 = 0
+                    if errory <= 0.005 and moveFlag == 0:
+                        print("error less .005", errory)
+                        moveFlag = 1
+
+                    # if moveFlag ==1:
+                    #     red_1_start_pos[1] = yPredicted
+                if abs(yPredicted) <= operationRange and moveFlag ==1:
+                    # if (red_1_start_pos[1] > -0.15) and (red_1_start_pos[1] < 0.4) and moveFlag ==1:
+                    if (yPredicted > -0.15) and (yPredicted < 0.4) and moveFlag ==1:
+                        print("yPred", yPredicted)
+                        move_block(pub_command, loop_rate, [xy1[0], yPredicted + 0.14], red_1_end_pos, vel, accel)
+                        xy0 = [0, 0]
+                        xy1 = [0, 0]
+                        zBlock = .03
+                        yPredicted_1 = []
+                        yPredicted = 0
+                        blockCount = 0
+                        vy = 0
+                        errory = 999
+                        tGuess = 0.5 #s
+                        invkGuess = []
+                        timeStart = 0
+                        timeFlag0 = 0
+                        timeFlag1 = 0
+                        moveFlag = 0
+                        redPos = []
+                    else:
+                        print('out of range')
+                        yPredicted_1 = []
+                        yPredicted = 0
+                        blockCount = 0
+                        vy = 0
+                        errory = 999
+                        tGuess = 0.5 #s
+                        invkGuess = []
+                        timeStart = 0
+                        timeFlag0 = 0
+                        timeFlag1 = 0
+                        moveFlag = 0
+                        redPos = []
+                    #     print(f'red_1_start_pos = {red_1_start_pos}')
             else:
-                print(f'red_1_start_pos = {red_1_start_pos}')
-        else:
-            rospy.Rate(2).sleep()
+                print("no block")
+                rospy.Rate(1).sleep()
 
     
 
