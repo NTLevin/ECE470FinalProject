@@ -1,4 +1,4 @@
-# Fall22 UIUC ECE470 Project : Fruit Classifying Robot Arm
+# Fall22 UIUC ECE470 Project : Rapid Object Sorter (ROS) for Fruit
 
 ### Team Members : 
 * Avram Fouad ***afouad2***
@@ -29,4 +29,4 @@ source code is here : https://drive.google.com/file/d/1DdJ8mFw_B7jsP5NnZhcOFd3K9
 * ROS
 * Gazebo
 * OpenCV
-* Tensorflow / PyTorch (if we need to increase difficulty)
+* AprilTag
