@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>511</height>
+    <width>670</width>
+    <height>226</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Fruit Sorter Control Panel</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="groupBox">
@@ -19,8 +19,8 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>771</width>
-      <height>211</height>
+      <width>241</width>
+      <height>161</height>
      </rect>
     </property>
     <property name="title">
@@ -31,7 +31,7 @@
       <rect>
        <x>90</x>
        <y>30</y>
-       <width>121</width>
+       <width>141</width>
        <height>51</height>
       </rect>
      </property>
@@ -52,14 +52,40 @@
       <string>3 Blocks :</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>71</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Random :</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_delete_all">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>100</y>
+       <width>141</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Delete All Blocks</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>230</y>
-      <width>771</width>
-      <height>211</height>
+      <x>270</x>
+      <y>10</y>
+      <width>271</width>
+      <height>161</height>
      </rect>
     </property>
     <property name="title">
@@ -68,8 +94,8 @@
     <widget class="QPushButton" name="pushButton_conveyor_speed">
      <property name="geometry">
       <rect>
-       <x>350</x>
-       <y>40</y>
+       <x>140</x>
+       <y>100</y>
        <width>121</width>
        <height>51</height>
       </rect>
@@ -82,13 +108,13 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>46</y>
-       <width>181</width>
-       <height>41</height>
+       <y>30</y>
+       <width>121</width>
+       <height>51</height>
       </rect>
      </property>
      <property name="text">
-      <string>Conveyor Speed Control :</string>
+      <string>Speed Control  :</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -97,10 +123,10 @@
     <widget class="QLabel" name="label_3">
      <property name="geometry">
       <rect>
-       <x>310</x>
-       <y>46</y>
+       <x>240</x>
+       <y>30</y>
        <width>31</width>
-       <height>41</height>
+       <height>51</height>
       </rect>
      </property>
      <property name="text">
@@ -113,23 +139,82 @@
     <widget class="QPlainTextEdit" name="plainTextEdit_conveyor_speed">
      <property name="geometry">
       <rect>
-       <x>200</x>
-       <y>40</y>
+       <x>140</x>
+       <y>30</y>
        <width>104</width>
        <height>51</height>
       </rect>
      </property>
     </widget>
+    <widget class="QPushButton" name="pushButton_conveyor_stop">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>121</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Stop Conveyor</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>10</y>
+      <width>101</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>AprilTag</string>
+    </property>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>41</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>ID : </string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>30</y>
+       <width>41</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
    </widget>
    <zorder>groupBox_2</zorder>
    <zorder>groupBox</zorder>
+   <zorder>groupBox_3</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>670</width>
      <height>22</height>
     </rect>
    </property>

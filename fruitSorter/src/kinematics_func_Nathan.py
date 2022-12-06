@@ -262,3 +262,83 @@ def lab_invk(xWgrip, yWgrip, zWgrip, yaw_WgripDegree):
  	
 	# ==============================================================#
 	return lab_fk(theta1, theta2, theta3, theta4, theta5, theta6)
+
+def lab_invkNoMove(xWgrip, yWgrip, zWgrip):
+# =================== Your code starts here ====================#
+	yaw_WgripDegree = 90
+	theta1 = 0.0
+	theta2 = 0.0
+	theta3 = 0.0
+	theta4 = 0.0
+	theta5 = 0.0
+	theta6 = 0.0
+
+	L1 = 0.152 
+	L2 = 0.120
+	L3 = 0.244
+	L4 = 0.093
+	L5 = 0.213
+	L6 = 0.083
+	L7 = 0.083
+	L8 = 0.082
+	L9 = 0.0535
+	L10 = 0.059
+
+
+	xBgrip = xWgrip + 0.150 
+	yBgrip = yWgrip  - 0.150
+	zBGrip = zWgrip - 0.010
+	yaw = np.deg2rad()
+
+
+	xC = xBgrip - L9 * np.cos(yaw)
+	yC = yBgrip - L9 * np.sin(yaw)
+	zC = zBGrip
+	print((L2 + L6 - L4)/(np.sqrt(xC**2 + yC**2)))
+
+
+
+
+	theta1 = np.arctan2(yC,xC) - np.arcsin((L2 + L6 - L4)/(np.sqrt(xC**2 + yC**2)))
+
+	theta6 = np.deg2rad(90) - yaw + theta1
+
+	d_67 = np.sqrt((L7)**2 + ((L6+0.027))**2)
+	Beta = np.arctan2((L7),(L6 + 0.027))
+
+	x3_end = xC + d_67 * np.sin(theta1 - Beta)
+	y3_end = yC - d_67 * np.cos(theta1 - Beta)
+	z3_end = zC + L10 + L8
+
+
+
+	theta5 = np.deg2rad(-90)
+
+
+	d35 = np.sqrt((z3_end - L1)**2 + (x3_end**2+y3_end**2))
+	theta3 = np.deg2rad(180) - np.arccos((L3**2 + L5**2 - d35**2)/(2*L3*L5))
+
+	d5 = L5*np.cos(theta3)
+	d6 = L5*np.sin(theta3)
+	# theta2 = -(np.arctan2(d6,(L3+d5)) + np.arctan2((z3_end - L1),np.sqrt(x3_end**2 + y3_end**2)))
+	theta2 = -(np.arcsin(L5 * np.sin(theta3) / d35) + np.arctan2((z3_end - L1),np.sqrt(x3_end**2 + y3_end**2)))
+
+	theta4 = -theta3 - theta2
+
+
+	print("theta 1: ", theta1)
+	print("theta 2: ", theta2)
+	print("theta 3: ", theta3)
+	print("theta 4: ", theta4)
+	print("theta 5: ", theta5)
+	print("theta 6: ", theta6)
+
+	# theta1 = np.deg2rad(theta1)
+	# theta2 = np.deg2rad(theta2)
+	# theta3 = np.deg2rad(theta3)
+	# theta4 = np.deg2rad(theta4)
+	# theta5 = np.deg2rad(theta5)
+	# theta6 = np.deg2rad(theta6)
+	thetaList = [theta1, theta2, theta3, theta4, theta5, theta6]
+	# ==============================================================#
+	return thetaList

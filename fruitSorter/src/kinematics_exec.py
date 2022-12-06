@@ -4,12 +4,12 @@ import sys
 import copy
 import time
 import rospy
-
 import numpy as np
 from kinematics_header import *
 from kinematics_func import *
+# from kinematics_func_Nathan import *
 from blob_search import *
-
+from fruitSorter.msg import aprilTagMsg
 
 # ========================= Student's code starts here =========================
 
@@ -33,7 +33,7 @@ xw_yw_R = []
 SPIN_RATE = 20
 
 # UR3 home location
-home = [0*PI/180.0, 0*PI/180.0, 0*PI/180.0, 0*PI/180.0, 0*PI/180.0, 0*PI/180.0]
+home = [120*PI/180.0, -90*PI/180.0, 90*PI/180.0, -90*PI/180.0, -90*PI/180.0, 0*PI/180.0]
 
 # UR3 current position, using home position for initialization
 current_position = copy.deepcopy(home)
@@ -199,16 +199,18 @@ def move_block(pub_cmd, loop_rate, start_xw_yw_zw, target_xw_yw_zw, vel, accel):
     # target_tmp = [target_xw_yw_zw[0], target_xw_yw_zw[1], target_xw_yw_zw[2] + 0.2]
 
     # lab_invk(start_xw_yw_zw)
+    centerHeight = float(0.033)
+    tmpHeight = float(0.07)
     print(f'Start = {start_xw_yw_zw}')
     start_xw_yw_zw = list(start_xw_yw_zw)
     tmp_start_xw_yw_zw = list(start_xw_yw_zw)
-    start_xw_yw_zw.append(0.03)
-    tmp_start_xw_yw_zw.append(0.07)
+    start_xw_yw_zw.append(centerHeight)
+    tmp_start_xw_yw_zw.append(tmpHeight)
     
     target_xw_yw_zw = list(target_xw_yw_zw)
     tmp_target_xw_yw_zw = list(target_xw_yw_zw)
-    target_xw_yw_zw.append(0.03)
-    tmp_target_xw_yw_zw.append(0.07)
+    target_xw_yw_zw.append(centerHeight)
+    tmp_target_xw_yw_zw.append(tmpHeight)
 
     # gripper(pub_cmd, loop_rate, suction_off)
     
@@ -218,14 +220,23 @@ def move_block(pub_cmd, loop_rate, start_xw_yw_zw, target_xw_yw_zw, vel, accel):
     move_arm(pub_cmd, loop_rate, lab_invk(tmp_start_xw_yw_zw[0], tmp_start_xw_yw_zw[1], tmp_start_xw_yw_zw[2], 0), 4.0, 4.0)
     
     move_arm(pub_cmd, loop_rate, lab_invk(start_xw_yw_zw[0], start_xw_yw_zw[1], start_xw_yw_zw[2], 0), 4.0, 4.0)
+
     gripper(pub_cmd, loop_rate, suction_on)
     rospy.Rate(2).sleep()
+
+    if not digital_in_0:
+        error = 1
+        gripper(pub_cmd, loop_rate, suction_off)
+        move_arm(pub_cmd, loop_rate, lab_invk(0.1, 0.1, 0.15, 0), 4.0, 4.0)
+        return error
     
     move_arm(pub_cmd, loop_rate, lab_invk(tmp_start_xw_yw_zw[0], tmp_start_xw_yw_zw[1], tmp_start_xw_yw_zw[2], 0), 4.0, 4.0)
 
     move_arm(pub_cmd, loop_rate, lab_invk(tmp_target_xw_yw_zw[0], tmp_target_xw_yw_zw[1], tmp_target_xw_yw_zw[2], 0), 4.0, 4.0)
 
     move_arm(pub_cmd, loop_rate, lab_invk(target_xw_yw_zw[0], target_xw_yw_zw[1], target_xw_yw_zw[2], 0), 4.0, 4.0)
+
+    rospy.Rate(2).sleep()
 
     gripper(pub_cmd, loop_rate, suction_off)
     
@@ -251,6 +262,7 @@ class ImageConverter:
         self.bridge = CvBridge()
         self.image_pub = rospy.Publisher("/image_converter/output_video", Image, queue_size=10)
         self.image_sub = rospy.Subscriber("/cv_camera_node/image_raw", Image, self.image_callback)
+        # self.apriltag_sub = rospy.Subscriber("/arm_sensor/camera/image_raw", Image, self.apriltag_callback)
         self.loop_rate = rospy.Rate(SPIN_RATE)
 
         # Check if ROS is ready for operation
@@ -286,15 +298,21 @@ class ImageConverter:
 
         # xw_yw_G = blob_search(cv_image, "orange")
         xw_yw_Y = blob_search(cv_image, "yellow")
-        xw_yw_G = blob_search(cv_image, "green")
+        # xw_yw_G = blob_search(cv_image, "green")
         xw_yw_R = blob_search(cv_image, "red")
-
 
 """
 Program run from here
 """
 
+def aprilTagCallback(msg):
+    global aprilTagID
+    aprilTagID = msg.id
+    if aprilTagID != 0:
+        print(f'aprilTagID = {aprilTagID}')
+
 detect = True
+aprilTagID = 0
 
 def main():
 
@@ -303,8 +321,7 @@ def main():
     global xw_yw_G
     global xw_yw_R
     global detect
-    # global variable1
-    # global variable2
+    global aprilTagID
 
     # Initialize ROS node
     rospy.init_node('lab5node')
@@ -316,7 +333,7 @@ def main():
     # each time data is published
     sub_position = rospy.Subscriber('ur3/position', position, position_callback)
     sub_input = rospy.Subscriber('ur3/gripper_input', gripper_input, input_callback)
-
+    aprilTagSub = rospy.Subscriber("apriltag", aprilTagMsg, aprilTagCallback)
     # Check if ROS is ready for operation
     while(rospy.is_shutdown()):
         print("ROS is shutdown!")
@@ -340,9 +357,9 @@ def main():
 
     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     
-    green_1_end_pos = [0.195, -0.16]
-    yellow_1_end_pos = [0.25, -0.16]
-    red_1_end_pos = [0.25, -0.16]
+    green_1_end_pos = [-0.5, 0.15]
+    yellow_1_end_pos = [-0.5, 0.15]
+    red_1_end_pos = [-0.5, 0.15]
     operationRange = 0.15
     blockOffset = 0.03*3
     while detect:

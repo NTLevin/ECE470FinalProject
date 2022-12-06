@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<robot name="green_cube">
+  <link name="base_link">
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="0.0318 0.0318 0.0318" />
+    </geometry>
+  </collision>
+
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="0.0318 0.0318 0.0318" />
+    </geometry>
+  </visual>
+
+  <inertial>
+   <origin xyz="0 0 0" rpy="0 0 0"/>
+   <mass value="0.0225" />
+   <inertia
+      ixx="0.00000379215" ixy="0.0"  ixz="0.0"
+      iyy="0.00000379215" iyz="0.0"  izz="0.00000379215" />
+  </inertial>
+
+</link>
+
+<gazebo reference="base_link">
+  <mu1>100</mu1>
+  <mu2>100</mu2>
+  <kp>2147483647</kp>
+  <kd>1</kd>
+  <maxVel>0</maxVel>
+  <minDepth>0.001</minDepth>
+  <material>Gazebo/Yellow</material>
+</gazebo>
+
+<link name="april_cube_40_tag_40">
+  <inertial>
+    <mass value="0.001"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.00001" iyz="0" izz="0.00002"/>
+  </inertial>
+  <collision>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <geometry>
+      <box size="0.0318 0.0318 0.001"/>
+    </geometry>
+  </collision>
+  <visual>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <geometry>
+      <!-- use Python str to convert family name and to generate leading zeros -->
+      <mesh filename="package://tams_apriltags/meshes/tag36_11_00040.dae" scale="0.07000000000000001 0.07000000000000001 1"/>
+    </geometry>
+  </visual>
+</link>
+
+<gazebo reference="april_cube_40_tag_40">
+  <!-- <material>Gazebo/Red</material> -->
+  <turnGravityOff>false</turnGravityOff>
+  <selfCollide>false</selfCollide>
+  <mu1>0</mu1>
+  <mu2>0</mu2>
+  <kp>1000000.0</kp>
+  <kd>1.0</kd>
+</gazebo>
+
+<joint name="april_cube_40_tag_40_joint" type="fixed">
+  <origin rpy="0 0 0" xyz="0 0 0.0169"/>
+  <parent link="base_link"/>
+  <child link="april_cube_40_tag_40"/>
+</joint>
+
+</robot>
+

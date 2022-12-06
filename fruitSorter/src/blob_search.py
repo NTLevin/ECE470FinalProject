@@ -11,8 +11,8 @@ from scipy.linalg import expm
 # theta = 0.0
 theta = 0
 beta = 766
-tx = 0.295
-ty = 0.16 + 0.03*3
+tx = 0.29
+ty = 0.11
 
 # 0.16 0.235
 
@@ -115,7 +115,7 @@ def blob_search(image_raw, color):
 
     if len(blob_image_center) == 1:
         pt = blob_image_center[0]
-        print(f'blob_image_center = {pt}')
+        # print(f'blob_image_center = {pt}')
         # Convert image coordinates to global world coordinate using IM2W() function
         xw_yw.append(IMG2W(pt[0], pt[1]))
 
